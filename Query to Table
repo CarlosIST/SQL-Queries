@@ -1,0 +1,7 @@
+SELECT *
+
+INTO new_table_name
+
+FROM query_or_table_to transform
+
+WHERE conditions;
