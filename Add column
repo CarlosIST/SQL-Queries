@@ -1,0 +1,8 @@
+' Query for adding a new column to a table and set a value to it
+
+ALTER TABLE table_name 
+ADD column_name DataType
+
+UPDATE table_name
+SET column_name = 'value'
+;
