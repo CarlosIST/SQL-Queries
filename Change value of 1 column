@@ -1,0 +1,11 @@
+UPDATE name_of_table
+
+SET variable_name = 'new value'
+
+WHERE conditions (it can be referenced to the same variable or to others)
+
+EXAMPLE:
+
+UPDATE SA_TOTAL_B
+SET COBERTURA = 'Cobertura automática para incisos nuevos o no conocidos'
+WHERE COBERTURA = 'Cobertura automàtica para incisos nuevos o no cono';
