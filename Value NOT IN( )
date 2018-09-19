@@ -1,0 +1,7 @@
+SELECT *
+
+FROM table_to_filter
+
+WHERE var_name NOT IN('value 1', 'value 2', ...)
+
+;
