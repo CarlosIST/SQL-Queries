@@ -1,0 +1,69 @@
+SELECT YEAR([CallDate]) AS "YEAR_CALLS",     -- Year value from date column
+	   MONTH([CallDate]) AS "MONTH_CALLS",     -- Month value from date column
+	   CONCAT(YEAR([CallDate]), '-', MONTH([CallDate])) AS "DATE_KEY_CALLS",     -- Personalized date value
+	   COUNT(DISTINCT(CASE
+						WHEN [CallType] IN ('Detail and Sample',
+											'Detail Only', 
+											'Lunch and Learn with Samples', 
+											'Lunch and Learn WITHOUT Samples', 
+											'Sample Only') THEN [CallID]
+						ELSE 0
+					  END)) AS "TTL F2F CALLS",     -- Count unique values in "CallID" if  CallType are in the specified values, else not count and name column "TTL F2F CALLS"
+	   COUNT(DISTINCT(CASE
+						WHEN [CallType] = 'Detail and Sample' THEN [CallID]
+						ELSE 0
+					  END)) AS "D&S",               -- Count unique values in "CallID" if CallType is equal to a certain value, else 0 and name column "D&S" 
+	   SUM([Qty]) AS "TTL QTY_CALLS",       -- Sum values in "Qty" and name new column "TTL QTY CALLS"
+	   SUM(CASE  
+             WHEN [ProductDescription] = 'NUVESSA' THEN [Qty]
+              ELSE 0 
+           END) AS "NUV_CALLS",           -- Sum values in "Qty" when "ProductDescription" is equal to a certain value, else 0 and call "NUV_CALLS"
+		SUM(CASE  
+             WHEN [ProductDescription] IN ('CLINDESSE', 
+										   'EVAMIST', 
+										   'GYNAZOLE-1') THEN [Qty]
+              ELSE 0 
+           END) AS "PGO_CALLS",     -- Sum values of Qty when ProducDescription is in specified values, else 0 and call column "PGO_CALLS"
+	    SUM(CASE  
+             WHEN [ProductDescription] = 'SLYND' 
+				AND [CallType] IN ('Detail and Sample',
+								   'Detail Only', 
+								   'Lunch and Learn with Samples', 
+								   'Lunch and Learn WITHOUT Samples', 
+								   'Sample Only')
+								   THEN [Qty]
+              ELSE 0 
+           END) AS "SLYND_F2F",    -- Sum values of "Qty" when "ProductDescription" equals a certain value and "CallType" is in listed values, else 0 and name "SLYND_F2F"
+		SUM(CASE  
+             WHEN [ProductDescription] IN ('SELECT-OB+DHA', 
+										   'STROVITE ONE', 
+										   'VITAFOL FE+', 
+										   'VITAFOL GUMMIES', 
+										   'Vitafol OB DHA', 
+										   'VITAFOL STRIPS', 
+										   'VITAFOL-NANO', 
+										   'VITAFOL-ONE', 
+										   'VITAFOL-ULTRA') 
+				AND [CallType] IN ('Detail and Sample',
+								   'Detail Only', 
+								   'Lunch and Learn with Samples', 
+								   'Lunch and Learn WITHOUT Samples', 
+								   'Sample Only')
+								   THEN [Qty]
+              ELSE 0 
+           END) AS "PNV_F2F",    -- Sum values of "Qty" when "ProductDescription" is in listed values and "CallType" is in listed values, else 0 and name "PNV_F2F" 
+		COUNT(DISTINCT([SalesRepFullName])) AS "HEAD_COUNT",     -- Count unique values in "SalesRepFullName" and name the column "HEAD_COUNT"
+		COUNT(DISTINCT(CASE
+						WHEN [CallType] IN ('Detail and Sample', 
+											'Lunch and Learn with Samples',  
+											'Sample Only') THEN [CallID]
+						ELSE 0
+					  END)) /  COUNT(DISTINCT([SalesRepFullName])) AS "AVG_SE_CALLS"    -- Division between 2 COUNT(DISTINCT()) statements
+
+INTO [EXELTIS_SALES_OPS].[dbo].[MONTHLY_SAMPLING_CALLS_DATA]     -- Table to be created
+FROM [EXELTIS_SALES_OPS].[dbo].[CALLS]                           -- Source of data for query
+WHERE YEAR([CallDate]) IN (2020, 2021, 2022)                     -- Filter by values in "CallDate"
+GROUP BY YEAR([CallDate]), MONTH([CallDate]) --FORMAT([Shipped Date], 'MMM', 'en-US')     -- Group by Year and Month previously created
+ORDER BY YEAR([CallDate]), MONTH([CallDate])                                              -- Order By clause must include Group By variables 
+
+GO    
