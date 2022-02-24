@@ -1,0 +1,9 @@
+SELECT CallID, SDSCallEntityID, CallType, CallDate, CAST(CallDate AS date) AS CALL_DATE -- transform into date type
+, CallStatus, SalesRepFullName, TerritoryCode, 
+TerritoryDesc, CustomerID1, CustomerFullName, Address1, Address2, City, State, PostalCode, 
+ProductDescription, StrengthDescription, Qty, SignatureCaptured
+FROM CALLS
+WHERE CallStatus != 'Void'    -- filter query
+AND CAST(CallDate AS date) >= '01/01/2021'    -- filter date values
+AND CallType NOT IN ('Portal DTP','Pharmacy Detail', 'Remote Sample Request', 'Sample Adjustment', 'Self Service Sample Request') -- exclude these values
+ORDER BY CallDate
