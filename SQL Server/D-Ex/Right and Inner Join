@@ -1,0 +1,33 @@
+SELECT        TABLE_1.IMS_ID,      -- Select columns from different tables
+              TABLE_2.PDRP_FLAG, 
+              TABLE_3.LOLO, 
+              TABLE_4.SUBMARKET, 
+              TABLE_4.CLASS_1, 
+              TABLE_5.DATA_DATE, 
+              SUM(TABLE_6.TRX) AS TRX, 
+              TABLE_7.INCLUDE_POA, 
+              TABLE_7.[4WK], 
+              TABLE_7.[13WK], 
+              TABLE_7.LAST4PQ, 
+              TABLE_7.LAST13PQ
+FROM            TABLE_2 RIGHT OUTER JOIN
+                         TABLE_5 INNER JOIN
+                         TABLE_1 ON TABLE_5.IMS_ID = TABLE_1.IMS_ID
+                         ON TABLE_3.IMS_ID = TABLE_5.IMS_ID LEFT OUTER JOIN
+                         TABLE_2 ON TABLE_5.IMS_ID = TABLE_2.IMS_ID LEFT OUTER JOIN
+                         TABLE_4 ON TABLE_5.REPORT_NUMBER = TABLE_4.REPORT_NUM AND TABLE_5.PGN = TABLE_4.PGN RIGHT OUTER JOIN
+                         TABLE_6 ON TABLE_5.CLIENT_ID = TABLE_6.CLIENT_ID LEFT OUTER JOIN
+                         TABLE_7 ON TABLE_6.BUCKET = TABLE_7.BUCKET
+GROUP BY TABLE_4.CLASS_1,
+         TABLE_7.[4WK],
+         TABLE_7.[13WK], 
+         TABLE_5.DATA_DATE, 
+         TABLE_4.SUBMARKET, 
+         TABLE_1.IMS_ID, 
+         TABLE_2.PDRP_FLAG, 
+         TABLE_7.LAST4PQ, 
+         TABLE_7.LAST13PQ, 
+         TABLE_7.INCLUDE_POA, 
+         TABLE_3.LOLO
+HAVING        (TABLE_4.CLASS_1 = N'A') AND (TABLE_4.SUBMARKET = N'POP NORETHINDRONE 0.35') AND (TABLE_7.INCLUDE_POA = N'YES') OR
+                         (TABLE_4.CLASS_1 = N'B1') AND (TABLE_4.SUBMARKET = N'POP NORETHINDRONE 0.35') AND (TABLE_7.INCLUDE_POA = N'YES')
