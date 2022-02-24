@@ -1,0 +1,60 @@
+-- Drop dummy table
+DROP VIEW [DATABASE_NAME].[dbo].[NEW_TABLE_1];
+GO 
+
+-- Build TRX dataset
+SELECT [FLAG]
+      ,[IMS_ID_CHECK]
+      ,[KEY]
+      ,[C4 EXEL TRX] AS [C4 EXEL]    -- rename column
+      ,[C4 TTL TRX] AS [C4 TTL]      -- rename column
+      ,[C4 MS% TRX] AS [C4 MS%]      -- rename column
+      ,[C13 EXEL TRX] AS [C13 EXEL]  -- rename column
+      ,[C13 TTL TRX] AS [C13 TTL]    -- rename column
+      ,[C13 MS% TRX] AS [C13 MS%]    -- rename column
+	  , 'TRX' AS [FLAG_TRX_NRX]        -- hard input text into column
+	  INTO [DATABASE_NAME].[dbo].[NEW_TABLE_1]     -- create table
+  FROM [DATABASE_NAME].[dbo].[DATA_SOURCE]       -- data source
+
+-- Discard previous dataset
+DROP VIEW [DATABASE_NAME].[dbo].[NEW_TABLE_2];
+GO 
+
+-- Build NRX dataset
+SELECT [FLAG]
+      ,[C4 EXEL NRX] AS [C4 EXEL]      -- rename column
+      ,[C4 TTL NRX] AS [C4 TTL]        -- rename column
+      ,[C4 MS% NRX] AS [C4 MS%]        -- rename column
+      ,[C13 EXEL NRX] AS [C13 EXEL]    -- rename column
+      ,[C13 TTL NRX] AS [C13 TTL]      -- rename column
+      ,[C13 MS% NRX] AS [C13 MS%]      -- rename column
+	  , 'NRX' AS [FLAG_TRX_NRX]          -- hard input text into column
+	  INTO [DATABASE_NAME].[dbo].[NEW_TABLE_2]     -- create table
+  FROM [DATABASE_NAME].[dbo].[DATA_SOURCE]       -- data source
+
+-- Discard previous dataset
+DROP VIEW [DATABASE_NAME].[dbo].[NEW_TABLE_3]
+GO 
+
+-- Stack TRX and NRX data
+SELECT *
+INTO [DATABASE_NAME].[dbo].[NEW_TABLE_3]
+FROM [DATABASE_NAME].[dbo].[NEW_TABLE_1]
+
+UNION ALL
+
+SELECT *
+FROM [DATABASE_NAME].[dbo].[NEW_TABLE_2]
+;  
+GO  
+
+-- Create VIEW
+CREATE VIEW [NEW_VIEW] AS
+    SELECT *
+    FROM [DATABASE_NAME].[dbo].[NEW_TABLE_3];
+GO
+		
+-- View final output
+SELECT *
+FROM [DATABASE_NAME].[dbo].[NEW_VIEW];
+
